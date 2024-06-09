@@ -1,6 +1,10 @@
 const UserQuiz = (sequelize, DataTypes) =>
     sequelize.define("UserQuiz", {
-        score: DataTypes.INTEGER
+        id : {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
     },
         {
             defaultScope: {

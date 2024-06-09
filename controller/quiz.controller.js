@@ -24,9 +24,33 @@ const getQuizContent = async (req, res) => {
     }
 }
 
+const getQuizReview = async (req, res) => {
+    const id = req.params.id;
+    const userId = req.params.userId;
+    try {
+        const userQuiz = await db.UserQuiz.findOne({
+            where: { QuizId: id, UserId: userId }
+        });
+        const userQuizId = userQuiz.dataValues.id;
+        const userAnswers = await db.UserQuiz.findByPk(userQuizId, {
+            include: [{
+                model: db.QuizAttempt,
+                include: [{ model: db.UserQuizAnswer, include: [db.Answer, db.Question] }]
+            }]
+        });
+        res.status(200).send(userAnswers.QuizAttempt);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+
+}
+
 const quizController = {
     getCourseQuizzes,
-    getQuizContent
+    getQuizContent,
+    getQuizReview
 };
 
 export default quizController;

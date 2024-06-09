@@ -5,7 +5,7 @@ const Answer = (sequelize, DataTypes) =>
     },
         {
             defaultScope: {
-                attributes: { exclude: ['createdAt', 'updatedAt'] }
+                attributes: { exclude: ['createdAt', 'updatedAt', 'QuestionId'] }
             },
             tableName: "Answer"
         });

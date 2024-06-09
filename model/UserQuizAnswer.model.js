@@ -3,7 +3,7 @@ const UserQuizAnswer = (sequelize, DataTypes) =>
     },
         {
             defaultScope: {
-                attributes: { exclude: ['createdAt', 'updatedAt'] }
+                attributes: { exclude: ['createdAt', 'updatedAt', 'AnswerId', 'QuestionId', 'QuizAttemptId'] }
             },
             tableName: "UserQuizAnswer"
         });

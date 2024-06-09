@@ -25,6 +25,7 @@ const db = {};
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
 db.User = User(sequelize, Sequelize);
 db.Course = Course(sequelize, Sequelize);
 db.Material = Material(sequelize, Sequelize);
@@ -57,8 +58,8 @@ db.Quiz.belongsTo(db.Course);
 db.Quiz.hasMany(db.Material);
 db.Material.belongsTo(db.Quiz);
 
-db.QuizAttempt.hasOne(db.UserQuiz);
-db.UserQuiz.belongsTo(db.QuizAttempt);
+db.UserQuiz.hasOne(db.QuizAttempt, {foreignKey: 'UserQuizId'});
+db.QuizAttempt.belongsTo(db.UserQuiz, {foreignKey: 'UserQuizId'});
 
 db.QuizAttempt.hasMany(db.UserQuizAnswer);
 db.UserQuizAnswer.belongsTo(db.QuizAttempt);
