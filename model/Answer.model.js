@@ -4,6 +4,9 @@ const Answer = (sequelize, DataTypes) =>
         correct: DataTypes.BOOLEAN
     },
         {
+            defaultScope: {
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
+            },
             tableName: "Answer"
         });
 

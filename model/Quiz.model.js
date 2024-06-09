@@ -3,6 +3,9 @@ const Quiz = (sequelize, DataTypes) =>
         name: DataTypes.STRING,
     },
         {
+            defaultScope: {
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
+            },
             tableName: "Quiz"
         });
 

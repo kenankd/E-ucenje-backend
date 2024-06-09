@@ -4,6 +4,9 @@ const Question = (sequelize, DataTypes) =>
         points: DataTypes.INTEGER
     },
         {
+            defaultScope: {
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
+            },
             tableName: "Question"
         });
 

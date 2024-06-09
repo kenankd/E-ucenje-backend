@@ -4,6 +4,9 @@ const Notification = (sequelize, DataTypes) =>
         date: DataTypes.DATE
     },
         {
+            defaultScope: {
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
+            },
             tableName: "Notification"
         });
 

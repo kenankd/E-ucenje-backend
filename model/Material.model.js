@@ -8,6 +8,9 @@ const Material = (sequelize, DataTypes) =>
         file: DataTypes.BLOB('long'),
     },
         {
+            defaultScope: {
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
+            },
             tableName: "Material"
         });
 

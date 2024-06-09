@@ -7,6 +7,9 @@ const User = (sequelize, DataTypes) =>
         password:       Sequelize.STRING,
     },
     {
+        defaultScope: {
+            attributes: { exclude: ['createdAt', 'updatedAt'] }
+        },
         tableName: "User"
     });
 

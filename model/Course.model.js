@@ -4,6 +4,9 @@ const Course = (sequelize, DataTypes) =>
         description: DataTypes.STRING,
     },
         {
+            defaultScope: {
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
+            },
             tableName: "Course"
         });
 
