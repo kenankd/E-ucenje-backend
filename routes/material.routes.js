@@ -4,6 +4,6 @@ import materialController from '../controller/material.controller.js'
 
 const router = express.Router()
 
-router.get('/:id', materialController.getFile);
+router.get('/:id/file', materialController.getFile);
 
 export default router
