@@ -41,16 +41,53 @@ const getQuizReview = async (req, res) => {
         res.status(200).send(userAnswers.QuizAttempt);
     }
     catch (error) {
-        console.log(error);
         res.status(400).json(error);
     }
+}
 
+const submitQuiz = async (req, res) => {
+    try {
+        const { id, userId } = req.params;
+        const {answers} = req.body;
+        
+        const userQuiz = await db.UserQuiz.create({
+            UserId: userId,
+            QuizId: id
+        });
+        const userQuizId = userQuiz.dataValues.id;
+
+        const quizAttempt = await db.QuizAttempt.create({
+            date: new Date(),
+            score: null,
+            UserQuizId: userQuizId
+        });
+
+        let score = 0;
+        for (const answer of answers) {
+            await db.UserQuizAnswer.create({
+                UserQuizId: userQuizId,
+                QuestionId: answer.questionId,
+                AnswerId: answer.id
+            });
+        
+            const answerForQuestion = await db.Answer.findByPk(answer.id, { include: db.Question });
+            if (answerForQuestion.dataValues.correct === true) {
+                score += answerForQuestion.dataValues.Question.dataValues.points;
+            }
+        }
+        await db.QuizAttempt.update({ score }, { where: { id: quizAttempt.id } });
+        res.status(200).json({message: "Quiz submitted successfully"});
+    } catch (error) {
+        console.log(error)
+        res.status(400).json(error);
+    }
 }
 
 const quizController = {
     getCourseQuizzes,
     getQuizContent,
-    getQuizReview
+    getQuizReview,
+    submitQuiz
 };
 
 export default quizController;

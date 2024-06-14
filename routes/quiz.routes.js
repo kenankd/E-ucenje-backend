@@ -7,4 +7,7 @@ const router = express.Router()
 router.get('/:courseId', quizController.getCourseQuizzes);
 router.get('/:id/content', quizController.getQuizContent);
 router.get('/:id/user/:userId/review', quizController.getQuizReview);
+
+router.post('/:id/user/:userId/submit', quizController.submitQuiz);
+
 export default router;
