@@ -31,6 +31,8 @@ async function getCourseMaterials(req, res) {
     }
 }
 
+
+
 const courseController = {
     getCourses,
     getCourseById,
