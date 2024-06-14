@@ -49,7 +49,7 @@ const submitQuiz = async (req, res) => {
     try {
         const { id, userId } = req.params;
         const {answers} = req.body;
-        
+        console.log(answers);
         const userQuiz = await db.UserQuiz.create({
             UserId: userId,
             QuizId: id
@@ -64,13 +64,14 @@ const submitQuiz = async (req, res) => {
 
         let score = 0;
         for (const answer of answers) {
+            const answerForQuestion = await db.Answer.findByPk(answer.id, { include: db.Question });
             await db.UserQuizAnswer.create({
                 UserQuizId: userQuizId,
-                QuestionId: answer.questionId,
+                QuizAttemptId: quizAttempt.dataValues.id,
+                QuestionId: answerForQuestion.dataValues.Question.dataValues.id,
                 AnswerId: answer.id
             });
         
-            const answerForQuestion = await db.Answer.findByPk(answer.id, { include: db.Question });
             if (answerForQuestion.dataValues.correct === true) {
                 score += answerForQuestion.dataValues.Question.dataValues.points;
             }
