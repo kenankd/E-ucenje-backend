@@ -40,7 +40,7 @@ db.UserQuizAnswer = UserQuizAnswer(sequelize, Sequelize);
 db.User.belongsToMany(db.Quiz, { through: db.UserQuiz });
 db.Quiz.belongsToMany(db.User, { through: db.UserQuiz });
 
-db.User.hasMany(db.Notification);
+db.User.hasMany(db.Notification, );
 db.Notification.belongsTo(db.User);
 
 db.Quiz.hasMany(db.Question);
@@ -59,10 +59,10 @@ db.Quiz.hasMany(db.Material);
 db.Material.belongsTo(db.Quiz);
 
 db.UserQuiz.hasOne(db.QuizAttempt, {foreignKey: 'UserQuizId'});
-db.QuizAttempt.belongsTo(db.UserQuiz, {foreignKey: 'UserQuizId'});
+db.QuizAttempt.belongsTo(db.UserQuiz, {foreignKey: 'UserQuizId', onDelete : 'CASCADE'});
 
 db.QuizAttempt.hasMany(db.UserQuizAnswer);
-db.UserQuizAnswer.belongsTo(db.QuizAttempt);
+db.UserQuizAnswer.belongsTo(db.QuizAttempt, {onDelete : 'CASCADE'});
 
 db.Answer.hasMany(db.UserQuizAnswer);
 db.UserQuizAnswer.belongsTo(db.Answer);

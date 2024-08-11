@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.routes.js'
 import quizRoutes from './routes/quiz.routes.js'
 import courseRoutes from './routes/course.routes.js'
 import materialRoutes from './routes/material.routes.js'
+import session from 'express-session'
 
 const PORT = process.env.PORT || 3000;
 const app = express()
@@ -14,6 +15,12 @@ db.sequelize.sync()
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+    resave: true,
+    saveUninitialized: true,
+    secret: "secret",
+    cookie: { secure: false }
+}));
 
 app.use('/auth', authRoutes);
 app.use('/quiz', quizRoutes);
