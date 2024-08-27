@@ -7,6 +7,7 @@ import quizRoutes from './routes/quiz.routes.js'
 import courseRoutes from './routes/course.routes.js'
 import materialRoutes from './routes/material.routes.js'
 import session from 'express-session'
+import bcrypt from 'bcrypt'
 
 const PORT = process.env.PORT || 3000;
 const app = express()
@@ -21,7 +22,6 @@ app.use(session({
     secret: "secret",
     cookie: { secure: false }
 }));
-
 app.use('/auth', authRoutes);
 app.use('/quiz', quizRoutes);
 app.use('/course', courseRoutes);
