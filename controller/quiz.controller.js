@@ -64,25 +64,93 @@ const getQuizContent = async (req, res) => {
 }
 
 const getQuizReview = async (req, res) => {
-    const id = req.params.id;
-    const userId = req.params.userId;
     try {
+        const { id, userId } = req.params;
+
+        // Fetch the UserQuiz for the given user and quiz ID
         const userQuiz = await db.UserQuiz.findOne({
             where: { QuizId: id, UserId: userId }
         });
-        const userQuizId = userQuiz.dataValues.id;
-        const userAnswers = await db.UserQuiz.findByPk(userQuizId, {
-            include: [{
-                model: db.QuizAttempt,
-                include: [{ model: db.UserQuizAnswer, include: [db.Answer, db.Question] }]
-            }]
+
+        if (!userQuiz) {
+            return res.status(404).json({ message: 'Quiz not found for this user' });
+        }
+
+        // Fetch the QuizAttempt for the specific UserQuiz
+        const quizAttempt = await db.QuizAttempt.findOne({
+            where: { UserQuizId: userQuiz.id },
+            include: [
+                {
+                    model: db.UserQuizAnswer,
+                    include: [
+                        {
+                            model: db.Answer,
+                            attributes: ['id', 'text', 'correct'], // Use the correct attribute name
+                        },
+                        {
+                            model: db.Question,
+                            attributes: ['id', 'text'],
+                        },
+                    ],
+                },
+            ],
         });
-        res.status(200).send(userAnswers.QuizAttempt);
+
+        if (!quizAttempt) {
+            return res.status(404).json({ message: 'Quiz attempt not found' });
+        }
+
+        // Fetch the Quiz and its Questions and Answers separately
+        const quiz = await db.Quiz.findOne({
+            where: { id: userQuiz.QuizId },
+            include: [
+                {
+                    model: db.Question,
+                    include: [
+                        {
+                            model: db.Answer,
+                            attributes: ['id', 'text', 'correct'],
+                        },
+                    ],
+                },
+            ],
+        });
+
+        if (!quiz) {
+            return res.status(404).json({ message: 'Quiz not found' });
+        }
+
+        // Structure the response data
+        const quizReview = quiz.Questions.map((question) => {
+            const userAnswer = quizAttempt.UserQuizAnswers.find(
+                (ua) => ua.Question.id === question.id
+            );
+            //TODO ADD correct to every question
+            console.log(userAnswer)
+            return {
+                question: question.text,
+                answers: question.Answers.map((answer) => ({
+                    id: answer.id,
+                    text: answer.text,
+                    isCorrect: answer.correct,
+                    isSelected: userAnswer.Answer.id === answer.id,
+                })),
+            };
+        });
+
+        res.json({
+            quizName: quiz.name,
+            startedOn: quizAttempt.date,
+            score: quizAttempt.score,
+            //fali max score i state
+            review: quizReview,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
     }
-    catch (error) {
-        res.status(400).json(error);
-    }
-}
+};
+
 
 const submitQuiz = async (req, res) => {
     try {
@@ -131,6 +199,7 @@ const submitQuiz = async (req, res) => {
         res.status(400).json(error);
     }
 }
+
 
 const quizController = {
     getCourseQuizzes,
