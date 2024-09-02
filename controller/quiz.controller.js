@@ -76,6 +76,15 @@ const getQuizReview = async (req, res) => {
             return res.status(404).json({ message: 'Quiz not found for this user' });
         }
 
+        const questions = await db.Question.findAll({
+            where: { QuizId: id },
+            attributes: ['points']
+        });
+        let maxScore = 0;
+        for (const question of questions) {
+            maxScore += question.dataValues.points;
+        }
+
         // Fetch the QuizAttempt for the specific UserQuiz
         const quizAttempt = await db.QuizAttempt.findOne({
             where: { UserQuizId: userQuiz.id },
@@ -129,6 +138,7 @@ const getQuizReview = async (req, res) => {
             console.log(userAnswer)
             return {
                 question: question.text,
+                points: question.points,
                 answers: question.Answers.map((answer) => ({
                     id: answer.id,
                     text: answer.text,
@@ -138,11 +148,17 @@ const getQuizReview = async (req, res) => {
             };
         });
 
+        let state = "Failed"
+        if (quizAttempt.score / maxScore > 0.5) {
+            state = "Passed"
+        }
         res.json({
             quizName: quiz.name,
             startedOn: quizAttempt.date,
             score: quizAttempt.score,
-            //fali max score i state
+            maxScore: maxScore,
+            state,
+            time: quizAttempt.time,
             review: quizReview,
         });
     } catch (error) {
@@ -155,7 +171,7 @@ const getQuizReview = async (req, res) => {
 const submitQuiz = async (req, res) => {
     try {
         const { id, userId } = req.params;
-        const { answers } = req.body;
+        const { answers, time } = req.body;
         console.log(answers);
         let userQuiz = await db.UserQuiz.findOne({
             where: { UserId: userId, QuizId: id }
@@ -192,7 +208,7 @@ const submitQuiz = async (req, res) => {
                 score += answerForQuestion.dataValues.Question.dataValues.points;
             }
         }
-        await db.QuizAttempt.update({ score }, { where: { id: quizAttempt.id } });
+        await db.QuizAttempt.update({ score, time }, { where: { id: quizAttempt.id } });
         res.status(200).json({ message: "Quiz submitted successfully" });
     } catch (error) {
         console.log(error)

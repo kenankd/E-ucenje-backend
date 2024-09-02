@@ -2,6 +2,7 @@ const QuizAttempt = (sequelize, DataTypes) =>
     sequelize.define("QuizAttempt", {
         date: DataTypes.DATE,
         score: DataTypes.DOUBLE,
+        time: DataTypes.INTEGER
     },
         {
             defaultScope: {

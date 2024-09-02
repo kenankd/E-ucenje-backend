@@ -55,8 +55,12 @@ db.Material.belongsTo(db.Course);
 db.Course.hasMany(db.Quiz);
 db.Quiz.belongsTo(db.Course);
 
-db.Quiz.hasMany(db.Material);
-db.Material.belongsTo(db.Quiz);
+db.Course.hasMany(db.Material)
+db.Material.belongsTo(db.Course)
+
+
+db.Material.hasMany(db.Question);
+db.Question.belongsTo(db.Material);
 
 db.UserQuiz.hasOne(db.QuizAttempt, {foreignKey: 'UserQuizId'});
 db.QuizAttempt.belongsTo(db.UserQuiz, {foreignKey: 'UserQuizId', onDelete : 'CASCADE'});
