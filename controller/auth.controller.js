@@ -18,7 +18,6 @@ const login = async (req, res) => {
 
         const token = jwt.sign({ id: user.dataValues.id, username: user.dataValues.username }, process.env.JWT_SECRET);
         req.session.user = user.dataValues;
-        console.log(req.session.user);
         // Return the token
         return res.json({ token });
     } catch (error) {

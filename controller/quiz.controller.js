@@ -1,4 +1,5 @@
 import db from '../config/db.js';
+import { Op } from 'sequelize';
 
 const getCourseQuizzes = async (req, res) => {
     try {
@@ -27,7 +28,6 @@ const getCourseQuizzes = async (req, res) => {
 
             if (!userQuiz) {
                 quiz.dataValues.score = null;
-                console.log(quiz.dataValues)
                 return quiz;
             }
             const userQuizId = userQuiz.dataValues.id;
@@ -135,8 +135,8 @@ const getQuizReview = async (req, res) => {
                 (ua) => ua.Question.id === question.id
             );
             //TODO ADD correct to every question
-            console.log(userAnswer)
             return {
+                id: question.id,
                 question: question.text,
                 points: question.points,
                 answers: question.Answers.map((answer) => ({
@@ -147,11 +147,31 @@ const getQuizReview = async (req, res) => {
                 })),
             };
         });
-
         let state = "Failed"
         if (quizAttempt.score / maxScore > 0.5) {
             state = "Passed"
         }
+
+        //STATISTICS ABOUT MATERIALS RELATED TO QUESTIONS
+        //console.log(quizReview)
+        let statistics = ""
+
+        const materialIds = quiz.Questions.map(question => question.MaterialId);
+        console.log(materialIds)
+        // Fetch all materials that have a matching id
+        const materials = await db.Material.findAll({
+            where: {
+                id: {
+                    [Op.in]: materialIds
+                }
+            }
+        });
+        for (const material of materials) {
+            console.log(material)
+        }
+
+
+
         res.json({
             quizName: quiz.name,
             startedOn: quizAttempt.date,
@@ -172,7 +192,6 @@ const submitQuiz = async (req, res) => {
     try {
         const { id, userId } = req.params;
         const { answers, time } = req.body;
-        console.log(answers);
         let userQuiz = await db.UserQuiz.findOne({
             where: { UserId: userId, QuizId: id }
         });
