@@ -129,12 +129,10 @@ const getQuizReview = async (req, res) => {
             return res.status(404).json({ message: 'Quiz not found' });
         }
 
-        // Structure the response data
         const quizReview = quiz.Questions.map((question) => {
             const userAnswer = quizAttempt.UserQuizAnswers.find(
                 (ua) => ua.Question.id === question.id
             );
-            //TODO ADD correct to every question
             return {
                 id: question.id,
                 question: question.text,
@@ -235,12 +233,60 @@ const submitQuiz = async (req, res) => {
     }
 }
 
+const createQuiz = async (req, res) => {
+    const { name, time, CourseId, questions, minScore } = req.body;
+    console.log(req.body.questions[0].answers);
+    try {
+        const quiz = await db.Quiz.create({
+            name,
+            time,
+            minScore,
+            CourseId
+        });
+
+        for (const question of questions) {
+            const { text, points, answers, materialId } = question;
+            const newQuestion = await db.Question.create({
+                text,
+                points,
+                QuizId: quiz.id,
+                MaterialId : materialId
+            });
+
+            for (const answer of answers) {
+                const { text, correct } = answer;
+                await db.Answer.create({
+                    text,
+                    correct,
+                    QuestionId: newQuestion.id
+                });
+            }
+        }
+
+        res.status(201).send(quiz);
+    } catch (error) {
+        console.log(error);
+        res.status(400).send('Error creating quiz');
+    }
+}
+
+const deleteQuiz = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await db.Quiz.destroy({ where: { id } });
+        res.status(204).send();
+    } catch (error) {
+        res.status(400).send(error);
+    }
+}
 
 const quizController = {
     getCourseQuizzes,
     getQuizContent,
     getQuizReview,
-    submitQuiz
+    submitQuiz,
+    createQuiz,
+    deleteQuiz
 };
 
 export default quizController;

@@ -14,8 +14,9 @@ const app = express()
 
 db.sequelize.sync()
 app.use(cors())
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Increase payload size limit
+app.use(bodyParser.json({ limit: '50mb' }));  // Increase limit to 50 MB
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(session({
     resave: true,
     saveUninitialized: true,
