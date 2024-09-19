@@ -8,4 +8,6 @@ router.get('/', courseController.getCourses);
 router.get('/:id', courseController.getCourseById);
 router.get('/:id/materials', courseController.getCourseMaterials);
 
+router.post('/', courseController.createCourse);
+
 export default router;

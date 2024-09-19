@@ -63,12 +63,20 @@ async function getCourseMaterials(req, res) {
     }
 }
 
-
+async function createCourse(req, res) {
+    try {
+        const course = await db.Course.create(req.body);
+        res.status(201).send(course);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+}
 
 const courseController = {
     getCourses,
     getCourseById,
-    getCourseMaterials
+    getCourseMaterials,
+    createCourse
 }
 
 export default courseController;
