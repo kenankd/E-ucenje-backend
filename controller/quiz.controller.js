@@ -146,7 +146,7 @@ const getQuizReview = async (req, res) => {
             };
         });
         let state = "Failed"
-        if (quizAttempt.score / maxScore > 0.5) {
+        if (quizAttempt.score / maxScore >= 0.5) {
             state = "Passed"
         }
 
@@ -280,13 +280,21 @@ const deleteQuiz = async (req, res) => {
     }
 }
 
+const updateQuiz = async (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+    await db.Quiz.destroy({ where: { id } });
+    createQuiz(req, res);
+}
+
 const quizController = {
     getCourseQuizzes,
     getQuizContent,
     getQuizReview,
     submitQuiz,
     createQuiz,
-    deleteQuiz
+    deleteQuiz,
+    updateQuiz
 };
 
 export default quizController;

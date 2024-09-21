@@ -10,4 +10,5 @@ router.get('/:id/materials', courseController.getCourseMaterials);
 
 router.post('/', courseController.createCourse);
 
+router.delete('/:id', courseController.deleteCourse);
 export default router;

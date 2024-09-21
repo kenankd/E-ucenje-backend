@@ -72,11 +72,22 @@ async function createCourse(req, res) {
     }
 }
 
+async function deleteCourse(req, res) {
+    try {
+        const id = req.params.id;
+        await db.Course.destroy({ where: { id } });
+        res.status(204).send();
+    } catch (error) {
+        res.status(400).send(error);
+    }
+}
+
 const courseController = {
     getCourses,
     getCourseById,
     getCourseMaterials,
-    createCourse
+    createCourse,
+    deleteCourse
 }
 
 export default courseController;

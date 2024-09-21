@@ -13,4 +13,6 @@ router.post('/', quizController.createQuiz);
 
 router.delete('/:id', quizController.deleteQuiz);
 
+router.put('/:id', quizController.updateQuiz);
+
 export default router;
